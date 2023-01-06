@@ -39,12 +39,6 @@ def lint(session):
 def type_check(session):
   session.run("mypy", "./srcs", "./tests", external=True)
   session.run("pyright", "./srcs", "./tests", external=True)
-  #session.notify("pytype_check")
-
-
-@nox.session
-def pytype_check(session):
-  session.run("pytype", "./srcs", "./tests", external=True)
 
 
 @nox.session

@@ -12,13 +12,13 @@ toml = "*"
 mypy = "*"
 pyright = "*"
 yapf = "*"
-pytype = "^2022.11.18"
 nox = "*"
 pytest = "*"
 pytest-mock = "*"
 pytest-xdist = "*"
 pytest-cov = "*"
 loguru = "*"
+fire = "^0.5.0"
 
 [tool.poetry.dev-dependencies]
 
