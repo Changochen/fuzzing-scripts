@@ -5,6 +5,7 @@ Categorize the crashes.
 import fire
 import subprocess
 import re
+import os
 
 from utils import afl
 
@@ -29,15 +30,20 @@ def run_target_and_get_error(cmd):
 
 def extract_asan_error(msg):
   result = ErrorInfo()
-  asan_type_pattern = r"SUMMARY: AddressSanitizer: ([^\s]+) ([^\s]+) in (.+)"
+  asan_type_patterns = [r"SUMMARY: AddressSanitizer: ([^\s]+) ([^\s]+) in (.+)",
+  "SUMMARY: AddressSanitizer: (SEGV)( )([^\s]+)"]
   for line in msg.split("\n"):
     if "SUMMARY" in line:
-      match = re.search(asan_type_pattern, line)
+      for pattern in asan_type_patterns:
+        match = re.search(pattern, line)
+        if not match:
+            continue
+        result.error_type = match.group(1)
+        result.error_loc = match.group(3)
+        result.error_msg = match.group(2)
+        return result
+      print(msg)
       assert match
-      result.error_type = match.group(1)
-      result.error_loc = match.group(3)
-      result.error_msg = match.group(2)
-      return result
   assert False
 
 
@@ -54,7 +60,13 @@ def get_err_info(msg):
       result.error_msg = component[2]
       return result
     if "Seg" in line or "==ERROR" in line:
+      print(msg)
       assert False
+      result = ErrorInfo()
+      result.error_type = line
+      result.error_loc = line
+      result.error_msg = line
+      return result
   return None
 
 
