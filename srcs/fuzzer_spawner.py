@@ -23,6 +23,7 @@ if __name__ == "__main__":
   args.add_argument("-e", "--extra", help="extra args for the fuzzer", required=False, default="")
   args.add_argument("-u", "--unique", help="unique file name", required=False, default="")
   args.add_argument("--env", help="Environment variable.", required=False, default="")
+  args.add_argument("-d", "--dict", help="AFL dict", required=False, default="")
   args.add_argument("--no_unlimited_mem",
                     help="Whether not run with -m none",
                     required=False,
@@ -50,10 +51,15 @@ if __name__ == "__main__":
     mem_none = "-m none"
     if arg_result.no_unlimited_mem:
       mem_none = ""
+    #  cmd = f"{arg_result.env} {ap(arg_result.fuzzer)} {mem_none} -M master -i {arg_result.input} -o {output_dir} {arg_result.extra} --  {ap(arg_result.program)}"
+    #else:
+    dictionary = ""
+    if arg_result.dict:
+      dictionary = f"-x {arg_result.dict}"
     if i == 0:
-      cmd = f"{arg_result.env} {ap(arg_result.fuzzer)} {mem_none} -M master -i {arg_result.input} -o {output_dir} {arg_result.extra} --  {ap(arg_result.program)}"
+      cmd = f"{arg_result.env} {ap(arg_result.fuzzer)} {dictionary} {mem_none} -M master{i} -i {arg_result.input} -o {output_dir} {arg_result.extra} --   {ap(arg_result.program)}"
     else:
-      cmd = f"{arg_result.env} {ap(arg_result.fuzzer)} {mem_none} -S slave{i} -i {arg_result.input} -o {output_dir} {arg_result.extra} --   {ap(arg_result.program)}"
+      cmd = f"{arg_result.env} {ap(arg_result.fuzzer)} {dictionary} {mem_none} -S slave{i} -i {arg_result.input} -o {output_dir} {arg_result.extra} --   {ap(arg_result.program)}"
     if "@@@" in cmd and arg_result.unique:
       cmd = cmd.replace("@@@", arg_result.unique + str(i))
     print("COMMAND: ", cmd)
