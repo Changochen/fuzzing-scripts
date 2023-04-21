@@ -31,9 +31,9 @@ def run_target_and_get_error(cmd):
 def extract_asan_error(msg):
   result = ErrorInfo()
   asan_type_patterns = [r"SUMMARY: AddressSanitizer: ([^\s]+) ([^\s]+) in (.+)",
-  "SUMMARY: AddressSanitizer: (SEGV)( )([^\s]+)"]
+  "SUMMARY: AddressSanitizer: (SEGV)( )([^\s]+)", "SUMMARY: AddressSanitizer: (allocation-size-too-big)( )([^\s]+)"]
   for line in msg.split("\n"):
-    if "SUMMARY" in line:
+    if "SUMMARY" in line or "":
       for pattern in asan_type_patterns:
         match = re.search(pattern, line)
         if not match:
